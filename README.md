@@ -6,6 +6,10 @@ language: [multilingual, en, de, fr, es, pt, it, nl, sv, da, nb, ru, pl, tr, ar,
 tags: [laya, multilingual, mmbert, system-one, calibrated-decisions, rlcd, classification, routing, guardrails, moderation, commercial-use]
 ---
 
+<p align="center">
+  <img src="https://huggingface.co/convaiinnovations/laya/resolve/main/assets/logo-mark.png" alt="" width="72" />
+</p>
+
 # Laya Multilingual
 
 Non-autoregressive **System 1 decision model** covering 100+ languages. Give it a **state**
@@ -51,6 +55,17 @@ router = Router()
 router.predict({"body": "I was charged twice"}, questions)          # -> laya
 router.predict({"body": "二重に請求されました"}, questions)            # -> laya-multilingual
 ```
+
+Routing is per request, so a mixed workload otherwise pays a checkpoint swap on every language
+change. Load the ones you expect once, up front, and every later call is just a forward pass:
+
+```python
+router = Router()
+router.preload(["english", "multilingual"])      # both resident; no swap at request time
+```
+
+`router.attach("multilingual", agent)` registers an `Agent` you already built, so a process that
+loaded this checkpoint directly can hand it to the router instead of loading it twice.
 
 Routing is decided from the script of the input, **before** the forward pass — because the
 model's confidence gives no warning when a checkpoint cannot read its input (see below).
