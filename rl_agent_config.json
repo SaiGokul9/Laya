@@ -1,5 +1,5 @@
 {
-  "encoder": "/kaggle/input/notebooks/nandukuttan/rl-agent-asset/models/mmBERT-base",
+  "encoder": "jhu-clsp/mmBERT-base",
   "head_layers": 2,
   "max_len": 1024,
   "head_max_len": 256,
