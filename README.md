@@ -56,8 +56,9 @@ router.predict({"body": "I was charged twice"}, questions)          # -> laya
 router.predict({"body": "二重に請求されました"}, questions)            # -> laya-multilingual
 ```
 
-Routing is per request, so a mixed workload otherwise pays a checkpoint swap on every language
-change. Load the ones you expect once, up front, and every later call is just a forward pass:
+Since laya 0.3.7 the default `Router()` keeps both `english` and this checkpoint resident, so a
+mixed workload no longer swaps checkpoints on every language change. For a server, load them up
+front so even the first request of each language is just a forward pass:
 
 ```python
 router = Router()
@@ -66,6 +67,11 @@ router.preload(["english", "multilingual"])      # both resident; no swap at req
 
 `router.attach("multilingual", agent)` registers an `Agent` you already built, so a process that
 loaded this checkpoint directly can hand it to the router instead of loading it twice.
+
+In 0.3.7 more text reaches this checkpoint: plain-ASCII Spanish, Italian, Portuguese and French
+(accents stripped by mail clients and ticket systems), Brazilian Portuguese support text, and any
+script the router has no range for. If you already run a language-identification model, pass its
+answer with `router.predict(state, questions, lang_guess=code_or_callable)`.
 
 Routing is decided from the script of the input, **before** the forward pass — because the
 model's confidence gives no warning when a checkpoint cannot read its input (see below).
@@ -135,7 +141,16 @@ encoder is cheaper per token than 1024-dim / 28-layer, and the gap widens with b
 - **Keep `choice` questions under ~20 options.** Options share the fixed 256-token head budget, so
   a very large label space leaves only a few tokens per label and accuracy falls off sharply.
 - Low-resource languages are weak, not fixed: Swahili 0.210, Tamil 0.250, Amharic 0.110.
-- Ordinal `score` questions are the weakest primitive (SST-5 0.282).
+- Ordinal `score` questions are the weakest primitive (SST-5 0.282), and this checkpoint has a
+  **measured position bias on them**: it rarely picks the first-listed level, in any language,
+  including English (0 of 290 in one independent run,
+  [#131](https://github.com/NandhaKishorM/laya/issues/131)). For English score questions use the
+  English checkpoint. For other languages, validate score outputs on your own data first.
+- **`noul` can under-report "true" here.** On a clearly positive input, one measurement put
+  `P(true)` at about 0.5 while the negative case was correctly near 0
+  ([#156](https://github.com/NandhaKishorM/laya/issues/156)). If `noul` answers look weak, the same
+  question as a two-option `choice` with neutral keys (`A` / `B`) and yes/no descriptions is a
+  useful check.
 
 ## Links
 
