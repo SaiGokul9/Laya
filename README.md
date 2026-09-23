@@ -56,7 +56,7 @@ router.predict({"body": "I was charged twice"}, questions)          # -> laya
 router.predict({"body": "二重に請求されました"}, questions)            # -> laya-multilingual
 ```
 
-Since laya 0.3.7 the default `Router()` keeps both `english` and this checkpoint resident, so a
+Since laya 0.3.11 the default `Router()` keeps both `english` and this checkpoint resident, so a
 mixed workload no longer swaps checkpoints on every language change. For a server, load them up
 front so even the first request of each language is just a forward pass:
 
@@ -68,10 +68,14 @@ router.preload(["english", "multilingual"])      # both resident; no swap at req
 `router.attach("multilingual", agent)` registers an `Agent` you already built, so a process that
 loaded this checkpoint directly can hand it to the router instead of loading it twice.
 
-In 0.3.7 more text reaches this checkpoint: plain-ASCII Spanish, Italian, Portuguese and French
+Since laya 0.3.11 more text reaches this checkpoint: plain-ASCII Spanish, Italian, Portuguese and French
 (accents stripped by mail clients and ticket systems), Brazilian Portuguese support text, and any
 script the router has no range for. If you already run a language-identification model, pass its
 answer with `router.predict(state, questions, lang_guess=code_or_callable)`.
+
+It also receives CJK requests that contain Latin brand names, romanized
+Bangla, and Azerbaijani. On 20,000 English texts, at most 5 English sentences move, all quoting long
+native-script names.
 
 Routing is decided from the script of the input, **before** the forward pass — because the
 model's confidence gives no warning when a checkpoint cannot read its input (see below).
