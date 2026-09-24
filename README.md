@@ -23,8 +23,18 @@ for anything that is not English.**
 | checkpoint | encoder | params | context | use it for |
 |---|---|---|---|---|
 | [`convaiinnovations/laya`](https://huggingface.co/convaiinnovations/laya) | ModernBERT-large | 421M | 512 | English |
-| **`convaiinnovations/laya-multilingual`** (this repo) | mmBERT-base | 322M | 1024 | 100+ languages, ~2x faster |
+| **`convaiinnovations/laya-multilingual`** (this repo) | mmBERT-base | 322M | 1024 (up to 8,192) | 100+ languages, ~2x faster |
 | [`convaiinnovations/laya-typed-decisions`](https://huggingface.co/convaiinnovations/laya-typed-decisions) | ModernBERT-large | 421M | 1024 | the typed-decisions workflows |
+
+> **Long documents: this checkpoint reads up to 8,192 tokens.** It ships with a 1,024-token limit; raise it per call:
+>
+> ```python
+> import laya
+> agent = laya.load("convaiinnovations/laya-multilingual")
+> result = agent.predict(long_document, questions, max_len=8192)
+> ```
+>
+> **Accuracy does not drop.** Short inputs give identical answers at either limit. On long inputs it improves: with the request placed after about 6,300 tokens of other text, 8 of 10 test requests were answered correctly at 8,192, against 3 of 10 at the default limit, which cuts the request off. **Speed:** short inputs run at the same speed, because the cost follows the input's real length, not the limit. Long inputs take longer in proportion to their length: a 6,300-token input took 2.5 s instead of 0.18 s on an Apple GPU (8 s instead of 0.35 s on CPU).
 
 ## Quickstart
 
