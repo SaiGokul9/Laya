@@ -26,18 +26,18 @@ for anything that is not English.**
 | **`convaiinnovations/laya-multilingual`** (this repo) | mmBERT-base | 322M | 1024 (up to 8,192) | 100+ languages, ~2x faster |
 | [`convaiinnovations/laya-typed-decisions`](https://huggingface.co/convaiinnovations/laya-typed-decisions) | ModernBERT-large | 421M | 1024 | the typed-decisions workflows |
 
-> **Long documents: `laya-multilingual` accepts up to 8,192 tokens and is reliable up to about 4,000.** It ships with a 1,024-token limit, which cuts a long document off; raise it per call:
+> **Long documents: `laya-multilingual` reads up to 8,192 tokens.** It ships with a 1,024-token limit that cuts long documents off, so pass `max_len=8192` for them:
 >
 > ```python
 > import laya
 > agent = laya.load("convaiinnovations/laya-multilingual")
-> result = agent.predict(long_document, questions, max_len=4096)
+> result = agent.predict(long_document, questions, max_len=8192)
 > ```
 >
-> With the request placed after 2,000 to 4,000 tokens of other text, 17 to 18 of 20 requests were answered correctly at the higher limit, against 7 of 20 at the default. Beyond about 4,000 tokens results become unstable (8 to 17 of 20), probably because the checkpoint was trained with its 1,024-token limit, so treat `max_len=8192` as experimental. Short inputs give identical answers at any limit. Speed follows the input's real length, not the limit: short inputs are unchanged, and a 4,000-token input takes about 1.7 s on an Apple GPU.
+> In the table below, 16 to 18 of 20 requests were answered correctly with up to about 4,000 tokens of text before them; beyond that results vary (8 to 17 of 20), so check long-document accuracy on your own data. Short inputs give identical answers with `max_len=8192`, and speed follows the input's real length, not the limit: short inputs are unchanged, and a 4,000-token input takes about 1.7 s on an Apple GPU.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/NandhaKishorM/laya/main/assets/long_context_table.png" alt="laya-multilingual long-document accuracy by document length" width="100%" />
+  <img src="https://raw.githubusercontent.com/NandhaKishorM/laya/main/assets/long_context_8192.png" alt="laya-multilingual long-document accuracy by document length" width="100%" />
 </p>
 
 ## Quickstart
