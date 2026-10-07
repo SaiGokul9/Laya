@@ -3,7 +3,7 @@ license: apache-2.0
 library_name: transformers
 pipeline_tag: text-classification
 language: [multilingual, en, de, fr, es, pt, it, nl, sv, da, nb, ru, pl, tr, ar, he, fa, ur, hi, bn, ta, te, kn, ml, th, vi, id, ms, tl, ja, ko, zh, el, hu, fi, ro, sq, sl, sw, af, cy, am, hy, ka, km, my, mn, lv, is, az, jv]
-tags: [laya, multilingual, mmbert, system-one, calibrated-decisions, rlcd, classification, routing, guardrails, moderation, commercial-use]
+tags: [laya, multilingual, mmbert, system-one, calibrated-decisions, rlcd, classification, routing, guardrails, moderation, commercial-use, decision-model]
 ---
 
 <p align="center">
