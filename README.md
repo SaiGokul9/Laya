@@ -40,6 +40,8 @@ for anything that is not English.**
   <img src="https://raw.githubusercontent.com/NandhaKishorM/laya/main/assets/long_context_8192.png" alt="laya-multilingual long-document accuracy by document length" width="100%" />
 </p>
 
+> **A policy for your own decisions.** `laya.Agent(vegaml=True)` runs [vega](https://github.com/NandhaKishorM/vegaml), which can be fitted and calibrated to your task. [Embedding Studio](https://studio.embedding.in) drafts, fits and calibrates a vega policy from a description of your company and the decisions you need, then gives you a signed policy file that runs on your own machine with `vegaml`. You can start with no labelled data and add your own rows later.
+
 ## Quickstart
 
 ```bash
